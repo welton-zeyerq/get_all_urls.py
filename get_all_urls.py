@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import time
 import logging
 try:
     import requests
@@ -61,11 +62,17 @@ try:
     else:
         print("ERROR, NO OPTION OR DIGITATION ERROR")
 
+except requests.exceptions.Timeout:
+    time.sleep(5)
+    pass
+except requests.exceptions.TooManyRedirects:
+    print("url error")
+    pass
+except requests.exceptions.RequestException as error:
+#    raise SystemExit(error)
+    print(error)
+    pass   
 except KeyboardInterrupt:
     sys.exit()
 except Exception as error:
     print(error)
-
-
-
-
