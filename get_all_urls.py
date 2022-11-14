@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import sys
 import time
-import logging
 try:
     import requests
 except:
@@ -10,58 +9,64 @@ try:
     from bs4 import BeautifulSoup
 except:
     sys.exit("Install missing library: pip install bs4")
+import logging
 
-if len(sys.argv) !=5:
-    if len(sys.argv) !=3:
-        if len(sys.argv) !=2:
-            print("follow the example:")
-            print("")
-            print("%s -u https://www.site.com.br -s /home/user/Documents/get_all_urls.txt"%(sys.argv[0]))
-            sys.exit()
-
-try:
-    choice = str(sys.argv[3])
-    if choice == "-s":
-        LOG = sys.argv[4]
-        logging.basicConfig(level=logging.INFO, filename=LOG, format="%(message)s")
-
-    elif choice == "--save":
-        LOG = sys.argv[4]
-        logging.basicConfig(level=logging.INFO, filename=LOG, format="%(message)s")
-
-    else:
-        print("ERROR, NO OPTION OR DIGITATION ERROR")
-
-except KeyboardInterrupt:
+def help_gau():
+    print("follow the examples: ")
+    print()
+    print("%s -h"%(sys.argv[0]))
+    print("%s --help"%(sys.argv[0]))
+    print("%s -u https://www.site.com.br --save /home/user/Documents/get_all_urls.txt"%(sys.argv[0]))
     sys.exit()
-except Exception as error:
-    print(error)
 
-try:
+if len(sys.argv) <=1:
+    help_gau()
+    sys.exit()
+elif len(sys.argv) ==2:
     choice = str(sys.argv[1])
     if choice == "-u":
+        print("insert valid url")
+        sys.exit()
+    elif choice == "-h":
+        help_gau()
+        sys.exit()
+    elif choice == "--help":
+        help_gau()
+        sys.exit()
+    else:
+        print("invalid option")
+        print()
+        help_gau()
+        sys.exit()
+elif len(sys.argv) ==3:
+    print("insert save-file output")
+    sys.exit()
+elif len(sys.argv) ==4:
+    choice = str(sys.argv[3])
+    if choice == "--save":
+        print("insert save-file output")
+        sys.exit()
+    else:
+        print("invalid option")
+        print()
+        help_gau()
+        sys.exit()
+elif len(sys.argv) >=6:
+    print("incorrect parameters")
+    sys.exit()
+else:
+    pass
+
+LOG = sys.argv[4]
+logging.basicConfig(level=logging.INFO, filename=LOG, format="%(message)s")
+
+try:
+    if __name__ == "__main__":
         url = sys.argv[2]
         reqs = requests.get(url)
         soup = BeautifulSoup(reqs.text, "html.parser")
-
-        urls = []
-        for link in soup.find_all("a"):
-            print(link.get("href"))
-            logging.info(link.get("href"))
-
-    elif choice == "-h":
-        print("follow the examples:")
-        print("")
-        print("%s -u https://www.site.com.br -s /home/user/Documents/get_all_urls.txt"%(sys.argv[0]))
-
-    elif choice == "--help":
-        print("follow the examples:")
-        print("")
-        print("%s -u https://www.site.com.br -s /home/user/Documents/get_all_urls.txt"%(sys.argv[0]))
-
-    else:
-        print("ERROR, NO OPTION OR DIGITATION ERROR")
-
+except Exception as error:
+    pass
 except requests.exceptions.Timeout:
     time.sleep(5)
     pass
@@ -69,10 +74,12 @@ except requests.exceptions.TooManyRedirects:
     print("url error")
     pass
 except requests.exceptions.RequestException as error:
-#    raise SystemExit(error)
     print(error)
-    pass   
 except KeyboardInterrupt:
     sys.exit()
-except Exception as error:
-    print(error)
+
+urls = []
+for link in soup.find_all("a"):
+    print(link.get("href"))
+    logging.info(link.get("href"))
+
